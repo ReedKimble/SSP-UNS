@@ -2,6 +2,20 @@
 
 A modular TypeScript library that wires the Sung–Speech Protolanguage (SSP) specification into the Universal Number Set (UNS) runtime while providing a lightweight audio synthesis engine for listening to UNS-SSP utterances.
 
+## Overview
+
+This toolkit translates natural language into a sung-speech protolanguage (SSP) and generates audio representations through Universal Number Set (UNS) vector operations. The current version includes a **complete, production-ready application shell** with full UI navigation, state management, and modular architecture.
+
+**Current Stage**: The audio generation uses minimal MIDI-style synthesis because the sophisticated mapping from SSP emotional/semantic vectors to expressive musical parameters is an **emergent process** that develops through iterative refinement and user feedback.
+
+**Next Stage**: Multi-track synthesis with voice switching to account for tonal ranges not expressible with simple sine tones, plus expanded melody templates and dynamic instrument selection.
+
+## Project Structure
+
+- **`/src`** - Core TypeScript library (frame encoding, translation, audio synthesis)
+- **`/workspace`** - React web application (editor, translation studio, audio lab)
+- **`/docs`** - Specifications and integration guides
+
 ## Features
 
 - **Model ingestion** – load the ProtoLanguage JSON and normalize access to lexicon, speakers, instruments, and emotion profiles.
@@ -9,6 +23,7 @@ A modular TypeScript library that wires the Sung–Speech Protolanguage (SSP) sp
 - **Event pipeline** – interpret SSP tokens into tempo-aware note streams that keep track, speaker, and emotional context.
 - **Audio synthesis** – turn performances into PCM buffers or ready-to-save WAV bytes for rapid prototyping.
 - **Domain-to-SSP translation** – convert short English descriptions into concept graphs, lexemes, and SSP utterances with optional audio previews.
+- **Web Studio** – full-featured UI for designing, translating, and validating SSP documents with live audio preview.
 
 ## Getting Started
 
