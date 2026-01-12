@@ -25,4 +25,6 @@ export const router = createBrowserRouter([
       { path: 'help', element: <HelpRoute /> },
     ],
   },
-])
+], {
+  basename: '/SSP-UNS',
+})
