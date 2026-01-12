@@ -1,0 +1,300 @@
+{
+  "title": "ProtoLanguage — multidimensional melodic communication model (SSP)",
+  "version": "1.0.0",
+  "description": "Hypothesis-driven JSON model for simulating a multidimensional melodic protolanguage in the spirit of the Sung–Speech Protolanguage (SSP) hypothesis. This file is not a reconstruction of any historical language; it is a conceptual and computational framework for exploring how melodic tokens might encode roles, relations, emotion, and identity, and how such a system might be culturally compressed into reduced-dimensional speech.",
+  "meta": {
+    "hypothesis_level": "speculative, theory-building; not empirical reconstruction",
+    "intended_use": [
+      "conceptual illustration of SSP",
+      "multidimensional vs. reduced-dimensional communication experiments",
+      "didactic examples for explaining melodic token architecture"
+    ],
+    "cautions": [
+      "Do not treat this file as evidence of an actual ancestral language.",
+      "Mappings between meaning and melody here are illustrative only.",
+      "Gesture and full multimodal behavior are not represented and should be considered missing modalities."
+    ]
+  },
+  "dimensions": {
+    "acoustic": [
+      "pitch",
+      "interval",
+      "rhythm",
+      "duration",
+      "phrase_position",
+      "octave",
+      "timbre",
+      "intensity",
+      "articulation"
+    ],
+    "paralinguistic": [
+      "emotion_profile",
+      "speaker_identity"
+    ],
+    "semantic": [
+      "actor_role",
+      "relation_type",
+      "focus_status"
+    ],
+    "notes": "These dimension labels are conceptual handles used for organizing simulations. They do not imply that early humans discretized features in this way."
+  },
+  "enums": {
+    "octaves": [ "Low", "Medium", "High" ],
+    "actor_roles": [ "agent", "patient", "experiencer", "theme", "location" ],
+    "relation_types": [ "move", "perceive", "possess", "exist", "change" ],
+    "focus_status": [ "new", "given", "contrastive" ],
+    "emotions": [ "neutral", "calm", "alert", "afraid", "angry", "joyful", "sad" ],
+    "phrase_positions": [ "onset", "medial", "cadence" ]
+  },
+  "schema": {
+    "Note": {
+      "description": "Single note-like event in the melodic layer.",
+      "fields": {
+        "pitch": "int — MIDI note number (e.g. 60 = middle C).",
+        "duration": "int — number of ticks (relative to tick_division).",
+        "intensity": "int — 0–127 velocity-like value.",
+        "timbre": "string — instrument key referencing instruments map.",
+        "articulation": "string — e.g. 'legato', 'staccato', 'accent', 'tenuto'. Can be left null or omitted."
+      }
+    },
+    "EmotionProfile": {
+      "description": "Biases applied to a sequence to reflect a coarse emotional stance.",
+      "fields": {
+        "tempo_multiplier": "number — global tempo scaling factor, e.g. 0.8, 1.0, 1.2.",
+        "intensity_bias": "int — value added to base intensities (may be negative).",
+        "pitch_bias": "int — semitone shift for emotional coloring (may be negative).",
+        "tension": "number — abstract 0–1 scalar used by simulators for shaping contour or dissonance."
+      }
+    },
+    "Speaker": {
+      "description": "Defaults for a given speaker or voice identity.",
+      "fields": {
+        "default_octave": "string — one of enums.octaves.",
+        "instrument": "string — key into instruments map.",
+        "base_intensity": "int — typical intensity/velocity.",
+        "id_color": "string — optional label used by visualizers (e.g. 'clan_A', 'clan_B')."
+      }
+    },
+    "TokenForm": {
+      "description": "UI-friendly string format describing how a symbolic token is used in an utterance.",
+      "examples": [
+        "wolf",
+        "wolf~Low",
+        "wolf|Alice",
+        "wolf~High|Alice",
+        "wolf!"
+      ],
+      "rules": [
+        "'word' — dictionary lookup only.",
+        "'word~Octave' — override default octave (Low/Medium/High).",
+        "'word|Speaker' — override speaker identity; uses speaker defaults.",
+        "'word~Octave|Speaker' — combine explicit octave with speaker identity.",
+        "Sentence-final punctuation ('.','?','!') may appear as a separate token or attached to the last word in a UI, but simulators should interpret it as modifying the final melodic cadence.",
+        "'|' by itself indicates a long pause / sentence break."
+      ]
+    },
+    "Lexeme": {
+      "description": "Stable melodic pattern associated with a coarse meaning or relational function.",
+      "fields": {
+        "gloss": "string — human-readable gloss (e.g. 'I', 'see', 'wolf').",
+        "role": "string — actor role or part-of-sentence-type, referencing enums.actor_roles when applicable.",
+        "relation_type": "string or null — e.g. 'move', 'perceive', 'possess'.",
+        "base_notes": "array<Note> — unmodified melodic pattern in abstract form (Medium octave).",
+        "preferred_phrase_position": "string or null — e.g. 'onset', 'medial', 'cadence'."
+      }
+    },
+    "Utterance": {
+      "description": "One or more sequences of token forms with associated interpretation.",
+      "fields": {
+        "id": "string — unique identifier for the example.",
+        "tokens": "array<string> — token forms in the UI-style notation.",
+        "emotion": "string — key into emotion_profiles.",
+        "commentary": "string — human-oriented explanation of meaning and melodic behavior.",
+        "expected_effect": "string — free text describing the auditory impression and functional intention."
+      }
+    },
+    "CompressionMapping": {
+      "description": "Illustrative mapping from melodic tokens to reduced-dimensional symbolic strings, for exploring cultural compression.",
+      "fields": {
+        "phoneme_inventory": "array<string> — small set of symbolic units (e.g. ['ka','ta','mi','su']).",
+        "lexeme_to_symbol": "object — map from Lexeme.gloss to a sequence of symbolic items.",
+        "notes": "string — explanation of what is deliberately lost in this mapping (e.g. emotion, octave, timbre)."
+      }
+    }
+  },
+  "parameters": {
+    "tick_division": 480,
+    "default_tempo_bpm": 90,
+    "long_pause_ticks": 960,
+    "sentence_break_ticks": 960,
+    "octave_offsets": {
+      "Low": -12,
+      "Medium": 0,
+      "High": 12
+    }
+  },
+  "instruments": {
+    "choir": 52,
+    "flute": 73,
+    "drum_soft": 115,
+    "string_pad": 89
+  },
+  "speakers": {
+    "Neutral": {
+      "default_octave": "Medium",
+      "instrument": "choir",
+      "base_intensity": 96,
+      "id_color": "clan_generic"
+    },
+    "Alice": {
+      "default_octave": "High",
+      "instrument": "choir",
+      "base_intensity": 104,
+      "id_color": "clan_A"
+    },
+    "Bob": {
+      "default_octave": "Low",
+      "instrument": "choir",
+      "base_intensity": 88,
+      "id_color": "clan_B"
+    }
+  },
+  "emotion_profiles": {
+    "neutral": {
+      "tempo_multiplier": 1.0,
+      "intensity_bias": 0,
+      "pitch_bias": 0,
+      "tension": 0.4
+    },
+    "alert": {
+      "tempo_multiplier": 1.15,
+      "intensity_bias": 10,
+      "pitch_bias": 1,
+      "tension": 0.7
+    },
+    "afraid": {
+      "tempo_multiplier": 1.1,
+      "intensity_bias": 5,
+      "pitch_bias": 2,
+      "tension": 0.85
+    },
+    "calm": {
+      "tempo_multiplier": 0.85,
+      "intensity_bias": -8,
+      "pitch_bias": -1,
+      "tension": 0.3
+    }
+  },
+  "lexicon": {
+    "I": {
+      "gloss": "I (speaker-as-agent)",
+      "role": "agent",
+      "relation_type": null,
+      "preferred_phrase_position": "onset",
+      "base_notes": [
+        { "pitch": 60, "duration": 240, "intensity": 96, "timbre": "choir", "articulation": "legato" }
+      ]
+    },
+    "you": {
+      "gloss": "you (addressee-as-agent)",
+      "role": "agent",
+      "relation_type": null,
+      "preferred_phrase_position": "onset",
+      "base_notes": [
+        { "pitch": 62, "duration": 240, "intensity": 96, "timbre": "choir", "articulation": "legato" }
+      ]
+    },
+    "see": {
+      "gloss": "see / perceive",
+      "role": "experiencer",
+      "relation_type": "perceive",
+      "preferred_phrase_position": "medial",
+      "base_notes": [
+        { "pitch": 67, "duration": 180, "intensity": 96, "timbre": "choir", "articulation": "legato" },
+        { "pitch": 69, "duration": 300, "intensity": 96, "timbre": "choir", "articulation": "tenuto" }
+      ]
+    },
+    "wolf": {
+      "gloss": "wolf (dangerous animal)",
+      "role": "theme",
+      "relation_type": "exist",
+      "preferred_phrase_position": "cadence",
+      "base_notes": [
+        { "pitch": 55, "duration": 240, "intensity": 100, "timbre": "choir", "articulation": "accent" },
+        { "pitch": 52, "duration": 360, "intensity": 104, "timbre": "choir", "articulation": "accent" }
+      ]
+    },
+    "run": {
+      "gloss": "run / flee",
+      "role": "agent",
+      "relation_type": "move",
+      "preferred_phrase_position": "medial",
+      "base_notes": [
+        { "pitch": 64, "duration": 160, "intensity": 104, "timbre": "choir", "articulation": "staccato" },
+        { "pitch": 67, "duration": 160, "intensity": 108, "timbre": "choir", "articulation": "staccato" },
+        { "pitch": 71, "duration": 240, "intensity": 112, "timbre": "choir", "articulation": "accent" }
+      ]
+    },
+    "here": {
+      "gloss": "here / nearby",
+      "role": "location",
+      "relation_type": "exist",
+      "preferred_phrase_position": "cadence",
+      "base_notes": [
+        { "pitch": 60, "duration": 220, "intensity": 92, "timbre": "flute", "articulation": "legato" },
+        { "pitch": 59, "duration": 260, "intensity": 92, "timbre": "flute", "articulation": "tenuto" }
+      ]
+    }
+  },
+  "compression_mapping": {
+    "phoneme_inventory": [ "ka", "ta", "mi", "su" ],
+    "lexeme_to_symbol": {
+      "I": [ "mi" ],
+      "you": [ "su" ],
+      "see": [ "ka", "mi" ],
+      "wolf": [ "ta", "ta" ],
+      "run": [ "ka", "su" ],
+      "here": [ "mi", "ta" ]
+    },
+    "notes": "This mapping is intentionally lossy. It discards information about emotion, octave, timbre, articulation, and phrase position. It is included to support experiments in how a high-dimensional system could be compressed into a small symbolic inventory, in line with the SSP discussion of cultural compression."
+  },
+  "examples": [
+    {
+      "id": "ex-1-alert-wolf",
+      "tokens": [ "I|Alice", "see|Alice", "wolf|Alice", "!" ],
+      "emotion": "alert",
+      "commentary": "Alice signals to nearby listeners that she, as agent/experiencer, perceives a dangerous animal (wolf) in the environment. The final '!' marks an urgent exclamation, which simulators should realize as a sharper, higher-intensity cadence.",
+      "expected_effect": "Higher tempo and intensity than neutral, slight upward pitch bias from the alert profile, accented final notes on 'wolf', with Alice’s High octave default making the call cut across ambient noise."
+    },
+    {
+      "id": "ex-2-afraid-run",
+      "tokens": [ "You|Bob", "run|Bob", "here|Bob", "!" ],
+      "emotion": "afraid",
+      "commentary": "Bob urges the addressee to move quickly toward his location. The 'afraid' profile increases tension and may slightly raise pitch, while the exclamation encourages a more abrupt, forceful cadence.",
+      "expected_effect": "Faster-than-neutral tempo, increased intensity on 'run' and 'here', with a rising contour into the final accent. Bob’s Low octave default preserves a grounding quality even under fear."
+    },
+    {
+      "id": "ex-3-neutral-observation",
+      "tokens": [ "I|Neutral", "see|Neutral", "wolf|Neutral", "." ],
+      "emotion": "neutral",
+      "commentary": "A neutral observation that a wolf is present, without explicit urgency or command. The period indicates a statement-like cadence, typically realized with a gentle falling contour at the end.",
+      "expected_effect": "Moderate tempo, mid-level intensity, clear but unhurried phrasing, with a subtle downward inflection on the final 'wolf' note and minimal tension shaping."
+    }
+  ],
+  "prompt_template": {
+    "title": "Guidelines for consuming this ProtoLanguage JSON (SSP model).",
+    "instructions": [
+      "1) Treat this file as a hypothetical model, not as a reconstruction of any real ancestral language.",
+      "2) Load the top-level dimensions, enums, schema, parameters, instruments, speakers, and emotion_profiles to understand the modeling space.",
+      "3) Use the 'lexicon' entries as abstract melodic lexemes. For each token form in an utterance, start from the lexeme's base_notes, then apply:",
+      "   - speaker defaults (octave offset, base intensity, instrument),",
+      "   - explicit octave overrides (e.g. '~High'),",
+      "   - emotion profile biases (tempo, intensity, pitch, tension), and",
+      "   - sentence-final punctuation inflection ('.','?','!') to the final cadence.",
+      "4) When simulating, produce an event list or MIDI-like representation, but keep track of which dimensions (emotion, timbre, phrase position) are being used so you can compare with reduced-dimensional encodings.",
+      "5) Optionally use 'compression_mapping' to derive symbolic strings from lexeme glosses, and then compare the expressive bandwidth and ambiguity of the melodic vs. compressed systems.",
+      "6) For pedagogical explanations, show side-by-side: the tokens, their melodic realization (summarized), the compressed symbolic representation, and a natural-language gloss of the intended meaning.",
+      "7) When reasoning about SSP, always acknowledge that gesture and full multimodal context are missing here, and that this JSON captures only the vocal melodic slice of a likely richer communicative system."
+    ]
+  }
+}

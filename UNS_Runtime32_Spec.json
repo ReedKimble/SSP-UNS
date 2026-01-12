@@ -1,0 +1,181 @@
+{
+  "name": "UNS_Runtime32",
+  "version": "0.1.0",
+  "word_type": {
+    "name": "Word32",
+    "description": "Signed 32-bit integer (two's complement).",
+    "range": [
+      "-2147483648",
+      "2147483647"
+    ]
+  },
+  "fixed_point": {
+    "format": "Q16.16",
+    "scale_factor": 65536,
+    "encodeReal": "round(r * 65536)",
+    "decodeReal": "w / 65536"
+  },
+  "complex_scalar": {
+    "name": "Complex32",
+    "representation": [
+      "Word32 realPart",
+      "Word32 imagPart"
+    ]
+  },
+  "spaces": {
+    "microstate_space": {
+      "name": "X_runtime",
+      "indices": "0 .. M-1",
+      "parameter": "M"
+    }
+  },
+  "uvalue_representation": {
+    "name": "UValue32",
+    "type": "array",
+    "element": "Complex32",
+    "length": "M"
+  },
+  "ustate_representation": {
+    "name": "UState32",
+    "type": "array",
+    "element": "Complex32",
+    "length": "M",
+    "normalization": "sum_i |psi[i]|^2 \u2248 1"
+  },
+  "core_ops": {
+    "addQ16": {
+      "inputs": [
+        "Word32",
+        "Word32"
+      ],
+      "output": "Word32",
+      "semantics": "a + b"
+    },
+    "subQ16": {
+      "inputs": [
+        "Word32",
+        "Word32"
+      ],
+      "output": "Word32",
+      "semantics": "a - b"
+    },
+    "mulQ16": {
+      "inputs": [
+        "Word32",
+        "Word32"
+      ],
+      "output": "Word32",
+      "semantics": "(a * b) >> 16"
+    },
+    "divQ16": {
+      "inputs": [
+        "Word32",
+        "Word32"
+      ],
+      "output": "Word32",
+      "semantics": "(a << 16) / b"
+    }
+  },
+  "uns_ops": {
+    "u_add": {
+      "symbol": "+u",
+      "type": "UValue32 \u00d7 UValue32 -> UValue32",
+      "semantics": "element-wise complex add using addQ16"
+    },
+    "u_mul": {
+      "symbol": "*u",
+      "type": "UValue32 \u00d7 UValue32 -> UValue32",
+      "semantics": "element-wise complex multiply using mulQ16"
+    },
+    "s_scale": {
+      "symbol": "*s",
+      "type": "Complex32 \u00d7 UValue32 -> UValue32",
+      "semantics": "element-wise complex scalar multiply"
+    },
+    "const": {
+      "symbol": "const",
+      "type": "Complex32 -> UValue32",
+      "semantics": "fills all indices with same Complex32"
+    },
+    "read": {
+      "symbol": "read",
+      "type": "UValue32 \u00d7 UState32 -> Complex32",
+      "semantics": "finite-sum approximation of \u2211 f[i]*|psi[i]|^2"
+    }
+  },
+  "lifting": {
+    "lift1_32": {
+      "type": "(Complex32 -> Complex32 or Novel) \u00d7 UValue32 -> UValue32 or Mixed",
+      "semantics": "apply unary function component-wise"
+    },
+    "lift2_32": {
+      "type": "((Complex32, Complex32) -> Complex32 or Novel) \u00d7 UValue32 \u00d7 UValue32 -> UValue32 or Mixed",
+      "semantics": "apply binary function component-wise"
+    }
+  },
+  "novel_values": {
+    "NovelId": "Word32",
+    "NovelEntry": {
+      "id": "NovelId",
+      "op": "string",
+      "args": "list<Complex32>",
+      "index": "int"
+    },
+    "NovelTable": "map<NovelId, NovelEntry>"
+  },
+  "dimensional_transform": {
+    "symbol": "D",
+    "type": "N \u00d7 UState32 -> UState32",
+    "semantics": "reindexing/redistribution preserving approximate norm==1"
+  },
+  "simplex_operators": {
+    "core": {
+      "NORM": {
+        "signature": "nonnegative vector -> UNS",
+        "semantics": "Normalize by sum; if sum==0 return uniform vector of same dimension."
+      },
+      "MIX": {
+        "signature": "UNS \u00d7 UNS \u00d7 [0,1] -> UNS",
+        "semantics": "Convex combination \u03b1u + (1-\u03b1)v with \u03b1 clamped to [0,1]."
+      },
+      "MERGE": {
+        "signature": "{u^(j)}, {w_j} -> UNS",
+        "semantics": "Weighted nonnegative sum followed by NORM; weights default to 1 and must be \u22650."
+      },
+      "SPLIT": {
+        "signature": "UNS, {\u03b1_j} -> {subUNS}",
+        "semantics": "Outputs subnormalized pieces \u03b1_j u with \u03b1_j \u2265 0, \u2211 \u03b1_j = 1."
+      },
+      "CANCEL": {
+        "signature": "UNS \u00d7 UNS -> (UNS, UNS)",
+        "semantics": "Uses OVERLAP = min(u_i, v_i); renormalizes residuals with NORM (uniform fallback)."
+      },
+      "CANCEL_JOINT": {
+        "signature": "UNS \u00d7 UNS -> UNS",
+        "semantics": "Normalizes combined residual (u-w)+(v-w); uniform fallback on zero sum."
+      }
+    },
+    "helpers": {
+      "OVERLAP": {
+        "signature": "UNS \u00d7 UNS -> nonnegative vector",
+        "semantics": "Component-wise minima; no renormalization."
+      },
+      "MASK": {
+        "signature": "UNS \u00d7 nonnegative mask -> UNS",
+        "semantics": "Multiply component-wise then apply NORM (uniform fallback)."
+      },
+      "PROJECT": {
+        "signature": "UNS \u00d7 subset -> UNS",
+        "semantics": "MASK with binary mask (1 inside subset, 0 outside)."
+      },
+      "DOT": {
+        "signature": "UNS \u00d7 UNS -> [0,1]",
+        "semantics": "Sum of pairwise products; read-only similarity."
+      },
+      "DIST_L1": {
+        "signature": "UNS \u00d7 UNS -> [0,1]",
+        "semantics": "0.5 * sum |u_i - v_i|; read-only distance."
+      }
+    }
+  }
+}
