@@ -2,6 +2,10 @@
 
 A modular TypeScript library that wires the Sung–Speech Protolanguage (SSP) specification into the Universal Number Set (UNS) runtime while providing a lightweight audio synthesis engine for listening to UNS-SSP utterances.
 
+## Runtime Editor
+
+* **[UNS-SSP Studio](https://reedkimble.github.io/SSP-UNS/workspace/editor)** 
+
 ## Overview
 
 This toolkit translates natural language into a sung-speech protolanguage (SSP) and generates audio representations through Universal Number Set (UNS) vector operations. The current version includes a **complete, production-ready application shell** with full UI navigation, state management, and modular architecture.
