@@ -4,7 +4,7 @@ A modular TypeScript library that wires the Sung–Speech Protolanguage (SSP) sp
 
 ## Runtime Editor
 
-* **[UNS-SSP Studio](https://reedkimble.github.io/SSP-UNS/workspace/editor)** 
+* **[UNS-SSP Studio](https://reedkimble.github.io/SSP-UNS)** 
 
 ## Overview
 
